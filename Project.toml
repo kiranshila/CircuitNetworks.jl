@@ -1,0 +1,13 @@
+name = "CircuitNetworks"
+uuid = "d772a0f9-ba72-4ec1-8910-319e5a32fb03"
+authors = ["Kiran Shila"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]

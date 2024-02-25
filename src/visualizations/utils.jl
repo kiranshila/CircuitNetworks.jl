@@ -1,3 +1,5 @@
+import Base.show
+
 """
 Utility function to get the frequency scale across a range for printing and plotting
 """
@@ -19,3 +21,15 @@ function freq_scale(freqs::AbstractArray{T}) where {T<:Real}
 end
 
 freq_scale(network::DataCircuitNetwork) = freq_scale(network.f)
+
+function String(p::ParameterType)
+    if p == Parameter.S
+        "S"
+    elseif p == Parameter.Z
+        "Z"
+    elseif p == Parameter.Y
+        "Y"
+    elseif p == Parameter.ABCD
+        "ABCD"
+    end
+end

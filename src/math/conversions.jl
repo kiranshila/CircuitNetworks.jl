@@ -134,3 +134,59 @@ export
     s2y!, s2y, y2s!, y2s,
     y2z!, y2z, z2y!, z2y,
     s2a!, s2a, a2s!, a2s
+
+#############################  Network Conversions ################################
+
+# Multiple dispatch is handy here
+
+"""
+Construct a new `DataCircuitNetwork` by converting another to S parameters
+"""
+to_S(n::DataCircuitNetwork{Val{Parameter.S}, T, F, Z0}) where {T,F,Z0} = n
+
+function to_S(n::DataCircuitNetwork{Val{Parameter.Z}, T, F, Z0}) where {T,F,Z0}
+    params = z2s(n.params, n.z₀)
+    DataCircuitNetwork(params,n.f, n.z₀, Parameter.S)
+end
+
+function to_S(n::DataCircuitNetwork{Val{Parameter.Y}, T, F, Z0}) where {T,F,Z0}
+    params = y2s(n.params, n.z₀)
+    DataCircuitNetwork(params,n.f, n.z₀, Parameter.S)
+end
+
+function to_S(n::DataCircuitNetwork{Val{Parameter.ABCD}, T, F, Z0}) where {T,F,Z0}
+    params = a2s(n.params, n.z₀)
+    DataCircuitNetwork(params,n.f, n.z₀, Parameter.S)
+end
+
+"""
+Construct a new `DataCircuitNetwork` by converting another to ABCD parameters
+"""
+to_ABCD(n::DataCircuitNetwork{Val{Parameter.ABCD}, T, F, Z0}) where {T,F,Z0} = n
+
+function to_ABCD(n::DataCircuitNetwork{Val{Parameter.S}, T, F, Z0}) where {T,F,Z0}
+    params = s2a(n.params, n.z₀)
+    DataCircuitNetwork(params,n.f, n.z₀, Parameter.ABCD)
+end
+
+"""
+Construct a new `DataCircuitNetwork` by converting another to Z parameters
+"""
+to_Z(n::DataCircuitNetwork{Val{Parameter.Z}, T, F, Z0}) where {T,F,Z0} = n
+
+function to_Z(n::DataCircuitNetwork{Val{Parameter.S}, T, F, Z0}) where {T,F,Z0}
+    params = s2z(n.params, n.z₀)
+    DataCircuitNetwork(params,n.f, n.z₀, Parameter.Z)
+end
+
+"""
+Construct a new `DataCircuitNetwork` by converting another to Y parameters
+"""
+to_Y(n::DataCircuitNetwork{Val{Parameter.Y}, T, F, Z0}) where {T,F,Z0} = n
+
+function to_Y(n::DataCircuitNetwork{Val{Parameter.S}, T, F, Z0}) where {T,F,Z0}
+    params = s2y(n.params, n.z₀)
+    DataCircuitNetwork(params,n.f, n.z₀, Parameter.Y)
+end
+
+export to_S, to_ABCD, to_Y, to_Z

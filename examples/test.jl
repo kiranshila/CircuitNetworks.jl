@@ -1,10 +1,17 @@
-using CircuitNetworks, StaticArrays, BenchmarkTools, CUDA
+using CircuitNetworks, StaticArrays, BenchmarkTools, CUDA, Symbolics
 
-S = @SMatrix rand(ComplexF32, 2, 2)
-z0 = @SArray rand(ComplexF32, 2)
-ss = fill(S, 201)
-f = range(1e9, 5e9, 201)
+function rlgc_line(r, l, g, c, d)
+    function model(f, _)
+        z0 = sqrt((r + 2 * π * im * f * l) / (g + 2 * π * im * f * c))
+        γ = sqrt((r + 2 * π * im * f * l) * (g + 2 * π * im * f * c))
+        s = sinh(γ * d)
+        c = cosh(γ * d)
+        @SMatrix [c s*z0; s/z0 c]
+    end
+    #z0 = @SVector [50.0, 50.0]
+    #ModelCircuitNetwork(model, z0, Parameter.ABCD)
+end
 
-n = DataCircuitNetwork(ss, f; kind=Parameter.S)
+@code_lowered rlgc_line(rand(5)...)
 
-to_Z(n)
+@code_warntype rlgc_line(rand(Float32, 5)...)

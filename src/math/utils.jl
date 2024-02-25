@@ -1,5 +1,3 @@
-
-
 dB(x::Real) = 10 * log10(x)
 dB(x::Complex) = 10 * log10(abs(x))
 

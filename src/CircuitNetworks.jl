@@ -41,6 +41,8 @@ include("containers/model.jl")
 include("visualizations/utils.jl")
 include("math/utils.jl")
 include("math/conversions.jl")
+include("math/cascade.jl")
+include("math/twoport.jl")
 include("containers/introspection.jl")
 
 end

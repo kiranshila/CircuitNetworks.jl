@@ -18,4 +18,15 @@ using CircuitNetworks, Test, StaticArrays
         end
     end
 
+    @testset "Power Gains" begin
+        m = @SMatrix [
+            +0.8510+0.1493im -0.1250+0.4847im;
+            -0.1250+0.4847im +0.8180+0.2771im
+        ]
+        z0 = 50 + 0im
+        zs = 50 + 0im
+        zl = 50 + 0im
+
+    end
+
 end

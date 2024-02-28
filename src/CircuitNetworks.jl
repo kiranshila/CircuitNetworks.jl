@@ -43,6 +43,7 @@ include("math/utils.jl")
 include("math/conversions.jl")
 include("math/cascade.jl")
 include("math/twoport.jl")
+include("math/noise.jl")
 include("containers/introspection.jl")
 
 end

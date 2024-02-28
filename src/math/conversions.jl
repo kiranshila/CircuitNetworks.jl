@@ -4,14 +4,18 @@ using LinearAlgebra, Tullio
 
 # Power Waves and the Scattering Network (paper)
 
-function s2z_kern(S::AbstractMatrix, z0::AbstractVector)
+function s2z(S::AbstractMatrix, z0::AbstractVector)
     F = Diagonal(@. 1 / (2 * sqrt(abs(real(z0)))))
     G = Diagonal(z0)
     inv(F) * inv(I - S) * (S * G + G') * F
 end
 
+function s2z(S::AbstractMatrix; z0::Number=50.0)
+    s2z(S,fill(z0,size(S)[1]))
+end
+
 function s2z!(z::T, s::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    @tullio z[i] = s2z_kern(s[i], z0)
+    @tullio z[i] = s2z(s[i], z0)
 end
 
 function s2z(s::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
@@ -19,14 +23,18 @@ function s2z(s::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVect
     s2z!(z, s, z0)
 end
 
-function z2s_kern(Z::AbstractMatrix, z0::AbstractVector)
+function z2s(Z::AbstractMatrix, z0::AbstractVector)
     F = Diagonal(@. 1 / (2 * sqrt(abs(real(z0)))))
     G = Diagonal(z0)
     F * (Z - G') * inv(Z + G) * inv(F)
 end
 
+function z2s(Z::AbstractMatrix; z0::Number=50.0)
+    z2s(Z,fill(z0,size(Z)[1]))
+end
+
 function z2s!(s::T, z::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    @tullio s[i] = z2s_kern(z[i], z0)
+    @tullio s[i] = z2s(z[i], z0)
 end
 
 function z2s(z::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
@@ -36,14 +44,18 @@ end
 
 #### S <-> Y
 
-function s2y_kern(S::AbstractMatrix, z0::AbstractVector)
+function s2y(S::AbstractMatrix, z0::AbstractVector)
     F = Diagonal(@. 1 / (2 * sqrt(abs(real(z0)))))
     G = Diagonal(z0)
     inv(F) * inv(S * G + G') * (I - S) * F
 end
 
+function s2y(S::AbstractMatrix; z0::Number=50.0)
+    s2y(S,fill(z0,size(S)[1]))
+end
+
 function s2y!(y::T, s::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    @tullio y[i] = s2y_kern(s[i], z0)
+    @tullio y[i] = s2y(s[i], z0)
 end
 
 function s2y(s::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
@@ -51,14 +63,18 @@ function s2y(s::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVect
     s2y!(y, s, z0)
 end
 
-function y2s_kern(Y::AbstractMatrix, z0::AbstractVector)
+function y2s(Y::AbstractMatrix, z0::AbstractVector)
     F = Diagonal(@. 1 / (2 * sqrt(abs(real(z0)))))
     G = Diagonal(z0)
     F * (I - G' * Y) * inv(I + G * Y) * inv(F)
 end
 
+function y2s(Y::AbstractMatrix; z0::Number=50.0)
+    y2s(Y,fill(z0,size(S)[1]))
+end
+
 function y2s!(s::T, y::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    @tullio s[i] = y2s_kern(y[i], z0)
+    @tullio s[i] = y2s(y[i], z0)
 end
 
 function y2s(y::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
@@ -90,7 +106,7 @@ end
 
 # Conversions between s,z,y,h, abcd, and t which are valid for complex source and load impedances
 
-function s2a_kern(S::AbstractMatrix, z0::AbstractVector)
+function s2a(S::AbstractMatrix, z0::AbstractVector)
     denom = 2 * S[2, 1] * sqrt(real(z0[1]) * real(z0[2]))
     @SMatrix [
         ((z0[1]' + S[1, 1] * z0[1]) * (1 - S[2, 2]) + S[1, 2] * S[2, 1] * z0[1]) / denom#=
@@ -100,8 +116,12 @@ function s2a_kern(S::AbstractMatrix, z0::AbstractVector)
     ]
 end
 
+function s2a(S::AbstractMatrix; z0::Number=50.0)
+    s2a(S,fill(z0,size(S)[1]))
+end
+
 function s2a!(a::T, s::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    @tullio a[i] = s2a_kern(s[i], z0)
+    @tullio a[i] = s2a(s[i], z0)
 end
 
 function s2a(s::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
@@ -109,7 +129,7 @@ function s2a(s::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVect
     s2a!(a, s, z0)
 end
 
-function a2s_kern(A::AbstractMatrix, z0::AbstractVector)
+function a2s(A::AbstractMatrix, z0::AbstractVector)
     denom = A[1, 1] * z0[2] + A[1, 2] + A[2, 1] * z0[1] * z0[2] + A[2, 2] * z0[1]
     @SMatrix [
         (A[1, 1] * z0[2] + A[1, 2] - A[2, 1] * z0[1]' * z0[2] - A[2, 2] * z0[1]') / denom#=
@@ -117,6 +137,10 @@ function a2s_kern(A::AbstractMatrix, z0::AbstractVector)
         (2 * sqrt(real(z0[1]) * real(z0[2]))) / denom#=
         =#(-A[1, 1] * z0[2]' + A[1, 2] - A[2, 1] * z0[1] * z0[2]' + A[2, 2] * z0[1]) / denom
     ]
+end
+
+function a2s(A::AbstractMatrix; z0::Number=50.0)
+    a2s(A,fill(z0,size(S)[1]))
 end
 
 function a2s!(s::T, a::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}

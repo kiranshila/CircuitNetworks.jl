@@ -140,7 +140,7 @@ function a2s(A::AbstractMatrix, z0::AbstractVector)
 end
 
 function a2s(A::AbstractMatrix; z0::Number=50.0)
-    a2s(A,fill(z0,size(S)[1]))
+    a2s(A,fill(z0,size(A)[1]))
 end
 
 function a2s!(s::T, a::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}

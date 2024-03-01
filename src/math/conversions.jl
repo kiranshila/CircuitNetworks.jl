@@ -144,7 +144,7 @@ function a2s(A::AbstractMatrix; z0::Number=50.0)
 end
 
 function a2s!(s::T, a::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    @tullio s[i] = a2s_kern(a[i], z0)
+    @tullio s[i] = a2s(a[i], z0)
 end
 
 function a2s(a::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}

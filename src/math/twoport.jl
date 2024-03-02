@@ -6,19 +6,19 @@ function transducer_gain(S::AbstractMatrix, Γl::Number, Γs::Number)
 end
 
 function transducer_gain(s::T, Γl::AbstractVector, Γs::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    @tullio g[i] := transducer_gain(s[i], Γl[i], Γs[i])
+    @tullio grad = Dual g[i] := transducer_gain(s[i], Γl[i], Γs[i])
 end
 
 function transducer_gain(s::T, Γl::Number, Γs::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    @tullio g[i] := transducer_gain(s[i], Γl, Γs[i])
+    @tullio grad = Dual g[i] := transducer_gain(s[i], Γl, Γs[i])
 end
 
 function transducer_gain(s::T, Γl::AbstractVector, Γs::Number) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    @tullio g[i] := transducer_gain(s[i], Γl[i], Γs)
+    @tullio grad = Dual g[i] := transducer_gain(s[i], Γl[i], Γs)
 end
 
 function transducer_gain(s::T, Γl::Number, Γs::Number) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    @tullio g[i] := transducer_gain(s[i], Γl, Γs)
+    @tullio grad = Dual g[i] := transducer_gain(s[i], Γl, Γs)
 end
 
 function transducer_gain(n::DataCircuitNetwork{Val{Parameter.S},T,F,Z0}, Γl, Γs) where {T,F,Z0}
@@ -32,11 +32,11 @@ function available_gain(S::AbstractMatrix, Γs::Number)
 end
 
 function available_gain(s::T, Γs::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    @tullio g[i] := available_gain(s[i], Γs[i])
+    @tullio grad = Dual g[i] := available_gain(s[i], Γs[i])
 end
 
 function available_gain(s::T, Γs::Number) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    @tullio g[i] := available_gain(s[i], Γs)
+    @tullio grad = Dual g[i] := available_gain(s[i], Γs)
 end
 
 function available_gain(n::DataCircuitNetwork{Val{Parameter.S},T,F,Z0}, Γs) where {T,F,Z0}

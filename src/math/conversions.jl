@@ -15,7 +15,7 @@ function s2z(S::AbstractMatrix; z0::Number=50.0)
 end
 
 function s2z!(z::T, s::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    @tullio z[i] = s2z(s[i], z0)
+    @tullio grad=Dual z[i] = s2z(s[i], z0)
 end
 
 function s2z(s::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
@@ -34,7 +34,7 @@ function z2s(Z::AbstractMatrix; z0::Number=50.0)
 end
 
 function z2s!(s::T, z::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    @tullio s[i] = z2s(z[i], z0)
+    @tullio grad=Dual s[i] = z2s(z[i], z0)
 end
 
 function z2s(z::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
@@ -55,7 +55,7 @@ function s2y(S::AbstractMatrix; z0::Number=50.0)
 end
 
 function s2y!(y::T, s::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    @tullio y[i] = s2y(s[i], z0)
+    @tullio grad=Dual y[i] = s2y(s[i], z0)
 end
 
 function s2y(s::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
@@ -74,7 +74,7 @@ function y2s(Y::AbstractMatrix; z0::Number=50.0)
 end
 
 function y2s!(s::T, y::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    @tullio s[i] = y2s(y[i], z0)
+    @tullio grad=Dual s[i] = y2s(y[i], z0)
 end
 
 function y2s(y::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
@@ -85,7 +85,7 @@ end
 #### Y <-> Z
 
 function y2z!(z::T, y::T) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    @tullio z[i] = inv(y[i])
+    @tullio grad=Dual z[i] = inv(y[i])
 end
 
 function y2z(y::T) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
@@ -94,7 +94,7 @@ function y2z(y::T) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
 end
 
 function z2y!(y::T, z::T) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    @tullio y[i] = inv(z[i])
+    @tullio grad=Dual y[i] = inv(z[i])
 end
 
 function z2y(z::T) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
@@ -121,7 +121,7 @@ function s2a(S::AbstractMatrix; z0::Number=50.0)
 end
 
 function s2a!(a::T, s::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    @tullio a[i] = s2a(s[i], z0)
+    @tullio grad=Dual a[i] = s2a(s[i], z0)
 end
 
 function s2a(s::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
@@ -144,7 +144,7 @@ function a2s(A::AbstractMatrix; z0::Number=50.0)
 end
 
 function a2s!(s::T, a::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    @tullio s[i] = a2s(a[i], z0)
+    @tullio grad=Dual s[i] = a2s(a[i], z0)
 end
 
 function a2s(a::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}

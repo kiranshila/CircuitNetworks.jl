@@ -7,7 +7,6 @@ version = "1.0.0-DEV"
 EnumX = "4e289a0a-7415-4d19-859d-a7e5c4648b56"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
-Tullio = "bc48ee85-29a4-5162-ae0b-a64e1601d4bc"
 
 [compat]
 julia = "1"

@@ -12,14 +12,14 @@ function s2z(S::AbstractMatrix, z0::AbstractVector)
     inv(F) * inv(I - S) * (S * G + G') * F
 end
 
-s2z(S::AbstractMatrix, z0::RefValue{T}) where {T<:AbstractVector} = s2z(S,z0[])
+s2z(S::AbstractMatrix, z0::RefValue{T}) where {T<:AbstractVector} = s2z(S, z0[])
 
 function s2z(S::AbstractMatrix; z0::Number=50.0)
-    s2z(S,fill(z0,size(S)[1]))
+    s2z(S, fill(z0, size(S)[1]))
 end
 
 function s2z!(z::T, s::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-     z .= s2z.(s,Ref(z0))
+    z .= s2z.(s, Ref(z0))
 end
 
 function s2z(s::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
@@ -33,14 +33,14 @@ function z2s(Z::AbstractMatrix, z0::AbstractVector)
     F * (Z - G') * inv(Z + G) * inv(F)
 end
 
-z2s(Z::AbstractMatrix, z0::RefValue{T}) where {T<:AbstractVector} = z2s(Z,z0[])
+z2s(Z::AbstractMatrix, z0::RefValue{T}) where {T<:AbstractVector} = z2s(Z, z0[])
 
 function z2s(Z::AbstractMatrix; z0::Number=50.0)
-    z2s(Z,fill(z0,size(Z)[1]))
+    z2s(Z, fill(z0, size(Z)[1]))
 end
 
 function z2s!(s::T, z::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    s .= z2s.(z,Ref(z0))
+    s .= z2s.(z, Ref(z0))
 end
 
 function z2s(z::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
@@ -56,14 +56,14 @@ function s2y(S::AbstractMatrix, z0::AbstractVector)
     inv(F) * inv(S * G + G') * (I - S) * F
 end
 
-s2y(S::AbstractMatrix, z0::RefValue{T}) where {T<:AbstractVector} = s2y(S,z0[])
+s2y(S::AbstractMatrix, z0::RefValue{T}) where {T<:AbstractVector} = s2y(S, z0[])
 
 function s2y(S::AbstractMatrix; z0::Number=50.0)
-    s2y(S,fill(z0,size(S)[1]))
+    s2y(S, fill(z0, size(S)[1]))
 end
 
 function s2y!(y::T, s::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    y .= s2y.(s,Ref(z0))
+    y .= s2y.(s, Ref(z0))
 end
 
 function s2y(s::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
@@ -77,14 +77,14 @@ function y2s(Y::AbstractMatrix, z0::AbstractVector)
     F * (I - G' * Y) * inv(I + G * Y) * inv(F)
 end
 
-y2s(Y::AbstractMatrix, z0::RefValue{T}) where {T<:AbstractVector} = y2s(Y,z0[])
+y2s(Y::AbstractMatrix, z0::RefValue{T}) where {T<:AbstractVector} = y2s(Y, z0[])
 
 function y2s(Y::AbstractMatrix; z0::Number=50.0)
-    y2s(Y,fill(z0,size(S)[1]))
+    y2s(Y, fill(z0, size(S)[1]))
 end
 
 function y2s!(s::T, y::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    s .= y2s.(y,Ref(z0))
+    s .= y2s.(y, Ref(z0))
 end
 
 function y2s(y::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
@@ -104,7 +104,7 @@ function y2z(y::T) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
 end
 
 function z2y!(y::T, z::T) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-   @. y = inv(z)
+    @. y = inv(z)
 end
 
 function z2y(z::T) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
@@ -116,24 +116,28 @@ end
 
 # Conversions between s,z,y,h, abcd, and t which are valid for complex source and load impedances
 
-function s2a(S::AbstractMatrix, z0::AbstractVector)
+function s2a!(A::AbstractMatrix, S::AbstractMatrix, z0::AbstractVector)
     denom = 2 * S[2, 1] * sqrt(real(z0[1]) * real(z0[2]))
-    @SMatrix [
-        ((z0[1]' + S[1, 1] * z0[1]) * (1 - S[2, 2]) + S[1, 2] * S[2, 1] * z0[1]) / denom#=
-        =# ((z0[1]' + S[1, 1] * z0[1]) * (z0[2]' + S[2, 2] * z0[2]) - S[1, 2] * S[2, 1] * z0[1] * z0[2]) / denom;
-        ((1 - S[1, 1]) * (1 - S[2, 2]) - S[1, 2] * S[2, 1]) / denom#=
-        =# ((1 - S[1, 1]) * (z0[2]' + S[2, 2] * z0[2]) + S[1, 2] * S[2, 1] * z0[2]) / denom
-    ]
+    A[1, 1] = ((z0[1]' + S[1, 1] * z0[1]) * (1 - S[2, 2]) + S[1, 2] * S[2, 1] * z0[1]) / denom
+    A[1, 2] = ((z0[1]' + S[1, 1] * z0[1]) * (z0[2]' + S[2, 2] * z0[2]) - S[1, 2] * S[2, 1] * z0[1] * z0[2]) / denom
+    A[2, 1] = ((1 - S[1, 1]) * (1 - S[2, 2]) - S[1, 2] * S[2, 1]) / denom
+    A[2, 2] = ((1 - S[1, 1]) * (z0[2]' + S[2, 2] * z0[2]) + S[1, 2] * S[2, 1] * z0[2]) / denom
+    A
 end
 
-s2a(S::AbstractMatrix, z0::RefValue{T}) where {T<:AbstractVector} = s2a(S,z0[])
+function s2a(S::AbstractMatrix, z0::AbstractVector)
+    A = similar(S)
+    s2a!(A, S, z0)
+end
+
+s2a(S::AbstractMatrix, z0::RefValue{T}) where {T<:AbstractVector} = s2a(S, z0[])
 
 function s2a(S::AbstractMatrix; z0::Number=50.0)
-    s2a(S,fill(z0,size(S)[1]))
+    s2a(S, fill(z0, size(S)[1]))
 end
 
 function s2a!(a::T, s::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    a .= s2a.(s,Ref(z0))
+    a .= s2a.(s, Ref(z0))
 end
 
 function s2a(s::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
@@ -141,24 +145,28 @@ function s2a(s::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVect
     s2a!(a, s, z0)
 end
 
-function a2s(A::AbstractMatrix, z0::AbstractVector)
+function a2s!(S::AbstractMatrix, A::AbstractMatrix, z0::AbstractVector)
     denom = A[1, 1] * z0[2] + A[1, 2] + A[2, 1] * z0[1] * z0[2] + A[2, 2] * z0[1]
-    @SMatrix [
-        (A[1, 1] * z0[2] + A[1, 2] - A[2, 1] * z0[1]' * z0[2] - A[2, 2] * z0[1]') / denom#=
-        =#(2 * (A[1, 1] * A[2, 2] - A[1, 2] * A[2, 1]) * sqrt(real(z0[1] * real(z0[2])))) / denom;
-        (2 * sqrt(real(z0[1]) * real(z0[2]))) / denom#=
-        =#(-A[1, 1] * z0[2]' + A[1, 2] - A[2, 1] * z0[1] * z0[2]' + A[2, 2] * z0[1]) / denom
-    ]
+    S[1, 1] = (A[1, 1] * z0[2] + A[1, 2] - A[2, 1] * z0[1]' * z0[2] - A[2, 2] * z0[1]') / denom
+    S[1, 2] = (2 * (A[1, 1] * A[2, 2] - A[1, 2] * A[2, 1]) * sqrt(real(z0[1] * real(z0[2])))) / denom
+    S[2, 1] = (2 * sqrt(real(z0[1]) * real(z0[2]))) / denom
+    S[2, 2] = (-A[1, 1] * z0[2]' + A[1, 2] - A[2, 1] * z0[1] * z0[2]' + A[2, 2] * z0[1]) / denom
+    S
 end
 
-a2s(A::AbstractMatrix, z0::RefValue{T}) where {T<:AbstractVector} = a2s(A,z0[])
+function a2s(A::AbstractMatrix, z0::AbstractVector)
+    S = similar(A)
+    a2s!(S, A, z0)
+end
+
+a2s(A::AbstractMatrix, z0::RefValue{T}) where {T<:AbstractVector} = a2s(A, z0[])
 
 function a2s(A::AbstractMatrix; z0::Number=50.0)
-    a2s(A,fill(z0,size(A)[1]))
+    a2s(A, fill(z0, size(A)[1]))
 end
 
 function a2s!(s::T, a::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
-    s .= a2s.(a,Ref(z0))
+    s .= a2s.(a, Ref(z0))
 end
 
 function a2s(a::T, z0::AbstractVector) where {TT<:AbstractMatrix,T<:AbstractVector{TT}}
@@ -180,51 +188,51 @@ export
 """
 Construct a new `DataCircuitNetwork` by converting another to S parameters
 """
-to_S(n::DataCircuitNetwork{Val{Parameter.S}, T, F, Z0}) where {T,F,Z0} = n
+to_S(n::DataCircuitNetwork{Val{Parameter.S},T,F,Z0}) where {T,F,Z0} = n
 
-function to_S(n::DataCircuitNetwork{Val{Parameter.Z}, T, F, Z0}) where {T,F,Z0}
+function to_S(n::DataCircuitNetwork{Val{Parameter.Z},T,F,Z0}) where {T,F,Z0}
     params = z2s(n.params, n.z₀)
-    DataCircuitNetwork(params,n.f, n.z₀, Parameter.S)
+    DataCircuitNetwork(params, n.f, n.z₀, Parameter.S)
 end
 
-function to_S(n::DataCircuitNetwork{Val{Parameter.Y}, T, F, Z0}) where {T,F,Z0}
+function to_S(n::DataCircuitNetwork{Val{Parameter.Y},T,F,Z0}) where {T,F,Z0}
     params = y2s(n.params, n.z₀)
-    DataCircuitNetwork(params,n.f, n.z₀, Parameter.S)
+    DataCircuitNetwork(params, n.f, n.z₀, Parameter.S)
 end
 
-function to_S(n::DataCircuitNetwork{Val{Parameter.ABCD}, T, F, Z0}) where {T,F,Z0}
+function to_S(n::DataCircuitNetwork{Val{Parameter.ABCD},T,F,Z0}) where {T,F,Z0}
     params = a2s(n.params, n.z₀)
-    DataCircuitNetwork(params,n.f, n.z₀, Parameter.S)
+    DataCircuitNetwork(params, n.f, n.z₀, Parameter.S)
 end
 
 """
 Construct a new `DataCircuitNetwork` by converting another to ABCD parameters
 """
-to_ABCD(n::DataCircuitNetwork{Val{Parameter.ABCD}, T, F, Z0}) where {T,F,Z0} = n
+to_ABCD(n::DataCircuitNetwork{Val{Parameter.ABCD},T,F,Z0}) where {T,F,Z0} = n
 
-function to_ABCD(n::DataCircuitNetwork{Val{Parameter.S}, T, F, Z0}) where {T,F,Z0}
+function to_ABCD(n::DataCircuitNetwork{Val{Parameter.S},T,F,Z0}) where {T,F,Z0}
     params = s2a(n.params, n.z₀)
-    DataCircuitNetwork(params,n.f, n.z₀, Parameter.ABCD)
+    DataCircuitNetwork(params, n.f, n.z₀, Parameter.ABCD)
 end
 
 """
 Construct a new `DataCircuitNetwork` by converting another to Z parameters
 """
-to_Z(n::DataCircuitNetwork{Val{Parameter.Z}, T, F, Z0}) where {T,F,Z0} = n
+to_Z(n::DataCircuitNetwork{Val{Parameter.Z},T,F,Z0}) where {T,F,Z0} = n
 
-function to_Z(n::DataCircuitNetwork{Val{Parameter.S}, T, F, Z0}) where {T,F,Z0}
+function to_Z(n::DataCircuitNetwork{Val{Parameter.S},T,F,Z0}) where {T,F,Z0}
     params = s2z(n.params, n.z₀)
-    DataCircuitNetwork(params,n.f, n.z₀, Parameter.Z)
+    DataCircuitNetwork(params, n.f, n.z₀, Parameter.Z)
 end
 
 """
 Construct a new `DataCircuitNetwork` by converting another to Y parameters
 """
-to_Y(n::DataCircuitNetwork{Val{Parameter.Y}, T, F, Z0}) where {T,F,Z0} = n
+to_Y(n::DataCircuitNetwork{Val{Parameter.Y},T,F,Z0}) where {T,F,Z0} = n
 
-function to_Y(n::DataCircuitNetwork{Val{Parameter.S}, T, F, Z0}) where {T,F,Z0}
+function to_Y(n::DataCircuitNetwork{Val{Parameter.S},T,F,Z0}) where {T,F,Z0}
     params = s2y(n.params, n.z₀)
-    DataCircuitNetwork(params,n.f, n.z₀, Parameter.Y)
+    DataCircuitNetwork(params, n.f, n.z₀, Parameter.Y)
 end
 
 export to_S, to_ABCD, to_Y, to_Z

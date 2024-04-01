@@ -54,7 +54,5 @@ using CircuitNetworks, Test, StaticArrays
         @test available_gain(s, Γs) ≈ 11.4361 atol = 0.01
     end
 
-    @testset "Noise Correctness" begin
-
-    end
+    @testset "Noise Correctness" begin end
 end

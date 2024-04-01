@@ -1,5 +1,5 @@
 function transducer_gain(S::AbstractMatrix, Γl::Number, Γs::Number)
-    ((1 - abs(Γs)^2) * abs(S[2, 1])^2 * (1 - abs(Γl)^2)) /
+    ((1 - abs2(Γs)) * abs2(S[2, 1]) * (1 - abs2(Γl))) /
     abs((1 - S[1, 1] * Γs) * (1 - S[2, 2] * Γl) - S[1, 2] * S[2, 1] * Γs * Γl)^2
 end
 
@@ -7,14 +7,23 @@ function transducer_gain(n::DataCircuitNetwork{Val{Parameter.S},T,F,Z0}, Γl, Γ
     transducer_gain.(n.params, Γl, Γs)
 end
 
+"""
+    Γout(S,Γs)
+Computes the output reflection coefficient of a two port network with its input (Port 1)
+terminated with a load whose reflection coefficient is Γs.
+"""
+function Γout(S::AbstractMatrix, Γs::Number)
+    S[2, 2] + (S[1, 2] * S[2, 1] * Γs) / (1 - S[1, 1] * Γs)
+end
+
 function available_gain(S::AbstractMatrix, Γs::Number)
-    Γout = S[2, 2] + (S[1, 2] * S[2, 1] * Γs) / (1 - S[1, 1] * Γs)
-    ((1 - abs(Γs)^2) * abs(S[2, 1])^2) /
-    (abs(1 - S[1, 1] * Γs)^2 * (1 - abs(Γout)^2))
+    pa_network = abs2(S[2, 1]) * (1 - abs2(Γs))
+    pa_source = abs2(1 - S[1, 1] * Γs) * (1 - abs2(Γout(S, Γs)))
+    pa_network / pa_source
 end
 
 function available_gain(n::DataCircuitNetwork{Val{Parameter.S},T,F,Z0}, Γs) where {T,F,Z0}
     available_gain.(n.params, Γs)
 end
 
-export transducer_gain, available_gain
+export transducer_gain, available_gain, Γout

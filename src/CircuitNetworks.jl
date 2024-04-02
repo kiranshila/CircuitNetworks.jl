@@ -44,6 +44,7 @@ include("math/conversions.jl")
 include("math/cascade.jl")
 include("math/twoport.jl")
 include("math/noise.jl")
+include("models/tlines.jl")
 include("containers/introspection.jl")
 
 end

@@ -54,5 +54,50 @@ using CircuitNetworks, Test, StaticArrays
         @test available_gain(s, Γs) ≈ 11.4361 atol = 0.01
     end
 
-    @testset "Noise Correctness" begin end
+    @testset "Coax" begin
+        # Double checking with linecalc results
+        # Not sure the method of linecalc, so the results may be slightly different
+
+        freq = 10e9
+        d_i = 0.5e-3
+        d_o = 1.5e-3
+        d = 3e-3
+
+        # Copper/Teflon Coax
+        σc = 5.813e7
+        εr = 2.1
+        tanδ = 0.002
+
+        r, l, g, c = coax_rlgc(d_i / 2, d_o / 2, freq; εr=εr, tanδ=tanδ, σc=σc)
+
+        z0 = rlgc_z0(r, l, g, c, freq)
+        γ = rlgc_γ(r, l, g, c, freq)
+
+        @test real(z0) ≈ 45.4554 atol = 0.01
+
+        # α -> neppers/m to db/m
+        a_db = 0.014
+        α = a_db * 0.1151277918 / d
+        @test real(γ) ≈ α atol = 0.1
+
+        # β is 2π/λ
+        λ = (299792458 / freq) * (1 / √(εr))
+        β = 2π / λ
+        @test imag(γ) ≈ β atol = 0.01
+
+        abcd = abcd_tline(γ, z0, d)
+        s = a2s(abcd)
+        @test angle(s[2, 1]) * 180 / π ≈ -52.2051 atol = 0.2 # Why is this one so off?
+    end
+
+    @testset "Noise Correctness" begin
+        freq = 1e9
+        rlgc = coax_rlgc(0.9e-3 / 2, 3.275e-3 / 2, freq; εr=2.1, tanδ=0.002, σc=5.813e7)
+        abcd = rlgc2abcd(rlgc..., 25e-3, freq)
+        s = a2s(abcd) # 50 Ohm default
+        nf = noise_figure(s, 0, 290) # Matched generator to 50 Ohms, 290K physical temperature
+        nt = noise_temperature(nf)
+        # Compare to ADS
+        @test nt ≈ 0.953 atol = 0.01
+    end
 end

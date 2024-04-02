@@ -17,9 +17,10 @@ function Γout(S::AbstractMatrix, Γs::Number)
 end
 
 function available_gain(S::AbstractMatrix, Γs::Number)
-    pa_network = abs2(S[2, 1]) * (1 - abs2(Γs))
-    pa_source = abs2(1 - S[1, 1] * Γs) * (1 - abs2(Γout(S, Γs)))
-    pa_network / pa_source
+    # Pozar eqn. 5.88
+    pavn = abs2(S[2, 1]) * (1 - abs2(Γs))
+    pavs = abs2(1 - S[1, 1] * Γs) * (1 - abs2(Γout(S, Γs)))
+    pavn / pavs
 end
 
 function available_gain(n::DataCircuitNetwork{Val{Parameter.S},T,F,Z0}, Γs) where {T,F,Z0}

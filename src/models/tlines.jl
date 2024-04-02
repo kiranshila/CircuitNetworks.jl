@@ -41,10 +41,14 @@ function coax_rlgc(a, b, freq; μr_d=1, εr=1, μr_c=1, tanδ=0, σc=Inf)
 end
 
 """The characteristic impedance of a transmission line given the RLGC parameters and frequency"""
-rlgc_z0(r::Real, l::Real, g::Real, c::Real, freq::Real) = sqrt((r + 2π * im * freq * l) / (g + 2π * im * freq * c))
+function rlgc_z0(r::Real, l::Real, g::Real, c::Real, freq::Real)
+    sqrt((r + 2π * im * freq * l) / (g + 2π * im * freq * c))
+end
 
 """The propogation constant of a transmission line given the RLGC parameters and frequency"""
-rlgc_γ(r::Real, l::Real, g::Real, c::Real, freq::Real) = sqrt((r + 2π * im * freq * l) * (g + 2π * im * freq * c))
+function rlgc_γ(r::Real, l::Real, g::Real, c::Real, freq::Real)
+    sqrt((r + 2π * im * freq * l) * (g + 2π * im * freq * c))
+end
 
 """
 Compute the ABCD matrix of a trasmission line by its complex propogation constant `γ`, its characteristic impedance `z₀` and the length `d`.

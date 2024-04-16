@@ -78,4 +78,4 @@ Construct an ABCD matrix of a transmission line from its RLGC paratemeters, the 
 """
 rlgc2abcd(r, l, g, c, d, freq) = abcd_tline(rlgc_γ(r, l, g, c, freq), rlgc_z0(r, l, g, c, freq), d)
 
-export coax_rlgc, rlgc2abcd, abcd_tline, rlgc2abcd, rlgc_z0, rlgc_γ
+export coax_rlgc, rlgc2abcd, abcd_tline, abcd_tline!, rlgc2abcd, rlgc_z0, rlgc_γ

@@ -53,10 +53,24 @@ end
 """
 Compute the ABCD matrix of a trasmission line by its complex propogation constant `γ`, its characteristic impedance `z₀` and the length `d`.
 """
-function abcd_tline(γ, z₀, d)
+function abcd_tline(γ::T1, z₀::T2, d::T3) where {T1<:Number,T2<:Number,T3<:Number}
+    T = promote_type(T1, T2, T3)
+    abcd = zero(MMatrix{2,2,T})
+    abcd_tline!(abcd, γ, z₀, d)
+    SMatrix(abcd)
+end
+
+"""
+Compute the (inplace) ABCD matrix of a trasmission line by its complex propogation constant `γ`, its characteristic impedance `z₀` and the length `d`.
+"""
+function abcd_tline!(abcd, γ, z₀, d)
     sh = sinh(γ * d)
     ch = cosh(γ * d)
-    @SMatrix [ch sh*z₀; sh/z₀ ch]
+    abcd[1] = ch
+    abcd[2] = sh / z₀
+    abcd[3] = sh * z₀
+    abcd[4] = ch
+    abcd
 end
 
 """

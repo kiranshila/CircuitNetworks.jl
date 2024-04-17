@@ -21,7 +21,7 @@ end
 Computes the input reflection coefficient of a two port network with its output (Port 2)
 terminated with a load whose reflection coefficient is Γl.
 """
-function Γout(S::AbstractMatrix, Γl::Number)
+function Γin(S::AbstractMatrix, Γl::Number)
     S[1, 1] + (S[2, 1] * S[1, 2] * Γl) / (1 - S[2, 2] * Γl)
 end
 
@@ -36,4 +36,4 @@ function available_gain(n::DataCircuitNetwork{Val{Parameter.S},T,F,Z0}, Γs) whe
     available_gain.(n.params, Γs)
 end
 
-export transducer_gain, available_gain, Γout
+export transducer_gain, available_gain, Γout, Γin

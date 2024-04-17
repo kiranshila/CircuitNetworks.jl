@@ -16,6 +16,15 @@ function Γout(S::AbstractMatrix, Γs::Number)
     S[2, 2] + (S[1, 2] * S[2, 1] * Γs) / (1 - S[1, 1] * Γs)
 end
 
+"""
+    Γin(S,Γl)
+Computes the input reflection coefficient of a two port network with its output (Port 2)
+terminated with a load whose reflection coefficient is Γl.
+"""
+function Γout(S::AbstractMatrix, Γl::Number)
+    S[1, 1] + (S[2, 1] * S[1, 2] * Γl) / (1 - S[2, 2] * Γl)
+end
+
 function available_gain(S::AbstractMatrix, Γs::Number)
     # Pozar eqn. 5.88
     pavn = abs2(S[2, 1]) * (1 - abs2(Γs))
